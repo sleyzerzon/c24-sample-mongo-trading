@@ -125,5 +125,55 @@
             <url>http://repository.springsource.com/maven/bundles/external</url>
         </repository>
     </repositories>
+    
+    <profiles>
+           <profile>
+               <id>distribute</id>
+               <build>
+                   <plugins>
+                       <!-- For packing up the example to go on to the website -->
+                       <!-- Collect the dependencies together -->
+                       <plugin>
+                           <groupId>org.apache.maven.plugins</groupId>
+                           <artifactId>maven-dependency-plugin</artifactId>
+                           <executions>
+                               <execution>
+                                   <id>copy-dependencies</id>
+                                   <phase>package</phase>
+                                   <goals>
+                                       <goal>copy-dependencies</goal>
+                                   </goals>
+                                   <configuration>
+                                       <outputDirectory>${project.build.directory}/dependencies</outputDirectory>
+                                       <useRepositoryLayout>false</useRepositoryLayout>
+                                       <copyPom>false</copyPom>
+                                   </configuration>
+                               </execution>
+                           </executions>
+                       </plugin>
+   
+                       <!-- Build the project artifact -->
+                       <plugin>
+                           <artifactId>maven-assembly-plugin</artifactId>
+                           <version>2.3</version>
+                           <executions>
+                               <execution>
+                                   <id>single</id>
+                                   <phase>package</phase>
+                                   <goals>
+                                       <goal>single</goal>
+                                   </goals>
+                                   <configuration>
+                                       <descriptors>
+                                           <descriptor>distribution/c24-sample-mongo-trading-assembly.xml</descriptor>
+                                       </descriptors>
+                                   </configuration>  
+                               </execution>
+                           </executions>
+                       </plugin>                     
+                   </plugins>
+               </build>
+           </profile>
+       </profiles>
 
 </project>

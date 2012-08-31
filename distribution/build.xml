@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ====================================================================== -->
+<!-- Ant build file (http://ant.apache.org/) for Ant 1.6.2 or above.        -->
+<!-- ====================================================================== -->
+
+<project name="c24-sample" default="compile" basedir=".">
+
+    <property name="java.dir" value="../src"/>
+    <property name="resource.dir" value="src/main/resources"/>
+	<property name="build.dir" value="../target"/>
+
+	<path id="project.classpath">
+	    <pathelement location="${build.dir}"/>
+		<fileset dir="dependencies">
+	        <include name="**/*.jar"/>
+	    </fileset>
+        <pathelement path="${classpath}"/>
+	</path>
+
+
+    <target name="clean" description="Clean the output directory">
+	    <delete dir="${build.dir}"/>
+	</target>
+
+	<target name="compile" description="Compile the code">
+	    <mkdir dir="${build.dir}"/>
+	    <javac destdir="${build.dir}" 
+	           nowarn="false" 
+	           debug="true" 
+	           optimize="true" 
+	           deprecation="true" 
+	           target="1.5" 
+	           verbose="false" 
+	           fork="false" 
+	    	   includeantruntime="false"
+	           source="1.5">
+            <src>
+                <pathelement location="${java.dir}"/>
+            </src>
+	        <classpath refid="project.classpath"/>
+	    </javac>
+	    <copy todir="${build.dir}">
+	        <fileset dir="${resource.dir}"/>
+	    </copy>
+    </target>
+
+	<target name="run" depends="compile" description="Runs the sample application">
+	   <java classpathref="project.classpath" classname="biz.c24.io.mongodb.fix.application.CreateNewOrderSingles"/>
+	</target>
+
+</project>

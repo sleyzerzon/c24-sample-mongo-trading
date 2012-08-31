@@ -1,0 +1,35 @@
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+  <id>project</id>
+  <formats>
+    <format>tar.gz</format>
+    <format>zip</format>
+  </formats>
+  <fileSets>
+    <fileSet>
+        <directory>${project.build.directory}/dependencies</directory>
+        <outputDirectory>/dependencies</outputDirectory>
+    </fileSet>
+    <fileSet>
+        <directory>src/main/java</directory>
+        <outputDirectory>/src</outputDirectory>
+    </fileSet>
+    <fileSet>
+        <directory>src/main/resources</directory>
+        <outputDirectory>/src</outputDirectory>
+    </fileSet>
+    <fileSet>
+        <directory>distribution</directory>
+        <outputDirectory>/</outputDirectory>
+        <excludes>
+            <exclude>c24-sample-mongo-trading-assembly.xml</exclude>
+        </excludes>
+    </fileSet>
+    <fileSet>
+        <directory>data</directory>
+        <outputDirectory>/data</outputDirectory>
+    </fileSet>
+
+  </fileSets>
+</assembly>

@@ -1,6 +1,5 @@
 package biz.c24.io.mongodb.fix.configuration;
 
-import biz.c24.io.mongodb.fix.db.MongoDbParams;
 import com.mongodb.Mongo;
 import com.sun.istack.internal.NotNull;
 import org.springframework.beans.factory.BeanCreationException;
@@ -41,32 +40,16 @@ public class MongoDbConfiguration {
 
     @Bean
     public MongoDbFactory getMongoDbFactory() {
-        return new SimpleMongoDbFactory(getMongoDb(), getMongoDbParams().getDatabase());
+        return new SimpleMongoDbFactory(getMongoDb(), 
+                database);
     }
 
     @Bean
     public Mongo getMongoDb() {
         try {
-            return new Mongo();
+            return new Mongo(server, port);
         } catch (UnknownHostException e) {
             throw new BeanCreationException("Error creating mongo bean.", e);
         }
-    }
-
-    @Bean
-    public MongoDbParams getMongoDbParams() {
-        return new MongoDbParams() {
-            public String getDatabase() {
-                return database;
-            }
-
-            public int getPort() {
-                return port;
-            }
-
-            public String getServer() {
-                return server;
-            }
-        };
     }
 }

@@ -3,7 +3,7 @@ package biz.c24.io.mongodb.fix.application;
 import biz.c24.io.api.data.ComplexDataObject;
 import biz.c24.io.api.presentation.FIXSource;
 import biz.c24.io.fix42.NewOrderSingleElement;
-import biz.c24.io.mongodb.fix.C24MessageParser;
+import biz.c24.io.mongodb.fix.C24ParseAdapter;
 import biz.c24.io.mongodb.fix.configuration.MongoDbConfiguration;
 import biz.c24.io.mongodb.fix.impl.FileUtils;
 import org.slf4j.Logger;
@@ -43,16 +43,16 @@ public class CreateNewOrderSingles {
     private void createNewOrders() {
         Assert.state(applicationContext != null);
         MongoTemplate mongoTemplate = applicationContext.getBean(MongoTemplate.class);
-        C24MessageParser<NewOrderSingleElement, FIXSource> c24NewOrderSingleMessageParser
-                = (C24MessageParser<NewOrderSingleElement, FIXSource>) applicationContext.getBean("c24NewOrderSingleMessageParser");
+        C24ParseAdapter<NewOrderSingleElement, FIXSource> c24NewOrderSingleParseAdapter
+                = (C24ParseAdapter<NewOrderSingleElement, FIXSource>) applicationContext.getBean("c24NewOrderSingleParseAdapter");
 
         try {
             File newOrderSingleSeriesFile = FileUtils.readClasspathResourceAsFile(FIX_NEW_ORDER_SERIES);
             BufferedReader reader = new BufferedReader(new FileReader(newOrderSingleSeriesFile));
             String rawMessage;
             while ((rawMessage = reader.readLine()) != null) {
-                ComplexDataObject newOrderSingle = c24NewOrderSingleMessageParser.bind(rawMessage);
-                mongoTemplate.save(c24NewOrderSingleMessageParser.asMongoDBObject(newOrderSingle), COLLECTION_NAME);
+                ComplexDataObject newOrderSingle = c24NewOrderSingleParseAdapter.bind(rawMessage);
+                mongoTemplate.save(c24NewOrderSingleParseAdapter.asMongoDBObject(newOrderSingle), COLLECTION_NAME);
             }
         } catch (Exception e) {
             LOGGER.error("Error loading NewOrderSingle messages.", e);

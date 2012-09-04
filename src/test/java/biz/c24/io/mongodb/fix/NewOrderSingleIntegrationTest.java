@@ -32,7 +32,7 @@ public class NewOrderSingleIntegrationTest {
     private final String FIX_NEW_ORDER_SERIES = "/data-fixture/new-order-single/new-order-series-01.dat";
     
     @Autowired
-    private C24MessageParser<NewOrderSingleElement, FIXSource> c24NewOrderSingleMessageParser;
+    private C24ParseAdapter<NewOrderSingleElement, FIXSource> c24NewOrderSingleParseAdapter;
     
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -46,8 +46,8 @@ public class NewOrderSingleIntegrationTest {
     public void insertSingleOrder() throws Exception {
 
         String rawMessage = FileUtils.readClasspathResourceAsString(FIX_NEW_ORDER_SINGLE_1);
-        ComplexDataObject newOrderSingle = c24NewOrderSingleMessageParser.bind(rawMessage);
-        mongoTemplate.save(c24NewOrderSingleMessageParser.asMongoDBObject(newOrderSingle), COLLECTION_NAME);
+        ComplexDataObject newOrderSingle = c24NewOrderSingleParseAdapter.bind(rawMessage);
+        mongoTemplate.save(c24NewOrderSingleParseAdapter.asMongoDBObject(newOrderSingle), COLLECTION_NAME);
     }
 
     @Test
@@ -57,8 +57,8 @@ public class NewOrderSingleIntegrationTest {
         BufferedReader reader = new BufferedReader(new FileReader(newOrderSingleSeriesFile));
         String rawMessage;
         while ((rawMessage = reader.readLine()) != null) {
-            ComplexDataObject newOrderSingle = c24NewOrderSingleMessageParser.bind(rawMessage);
-            mongoTemplate.save(c24NewOrderSingleMessageParser.asMongoDBObject(newOrderSingle), COLLECTION_NAME);
+            ComplexDataObject newOrderSingle = c24NewOrderSingleParseAdapter.bind(rawMessage);
+            mongoTemplate.save(c24NewOrderSingleParseAdapter.asMongoDBObject(newOrderSingle), COLLECTION_NAME);
         }
     }
 }

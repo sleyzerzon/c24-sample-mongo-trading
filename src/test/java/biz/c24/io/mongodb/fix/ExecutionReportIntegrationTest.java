@@ -32,7 +32,7 @@ public class ExecutionReportIntegrationTest {
     private final String FIX_EXECUTION_REPORT_SERIES = "/data-fixture/execution-report/execution-report-series-01.dat";
 
     @Autowired
-    private C24MessageParser<ExecutionReportElement, FIXSource> c24ExecutionReportMessageParser;
+    private C24ParseAdapter<ExecutionReportElement, FIXSource> c24ExecutionReportParseAdapter;
     
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -45,8 +45,8 @@ public class ExecutionReportIntegrationTest {
     @Test
     public void insertExecutionReport() throws Exception {
         String rawMessage = FileUtils.readClasspathResourceAsString(FIX_EXECUTION_REPORT_SINGLE_1);
-        ComplexDataObject executionReport = c24ExecutionReportMessageParser.bind(rawMessage);
-        mongoTemplate.save(c24ExecutionReportMessageParser.asMongoDBObject(executionReport), COLLECTION_NAME);
+        ComplexDataObject executionReport = c24ExecutionReportParseAdapter.bind(rawMessage);
+        mongoTemplate.save(c24ExecutionReportParseAdapter.asMongoDBObject(executionReport), COLLECTION_NAME);
     }
 
     @Test
@@ -56,8 +56,8 @@ public class ExecutionReportIntegrationTest {
         BufferedReader reader = new BufferedReader(new FileReader(newOrderSingleSeriesFile));
         String rawMessage;
         while ((rawMessage = reader.readLine()) != null) {
-            ComplexDataObject executionReport = c24ExecutionReportMessageParser.bind(rawMessage);
-            mongoTemplate.save(c24ExecutionReportMessageParser.asMongoDBObject(executionReport), COLLECTION_NAME);
+            ComplexDataObject executionReport = c24ExecutionReportParseAdapter.bind(rawMessage);
+            mongoTemplate.save(c24ExecutionReportParseAdapter.asMongoDBObject(executionReport), COLLECTION_NAME);
         }
     }
 }

@@ -35,6 +35,7 @@ public class C24ParseAdapterImpl<E extends Element, S extends Source>
 
     public C24ParseAdapterImpl(S source, E element) {
         Assert.notNull(source, MANDATORY_ARGUMENT_MISSING);
+        Assert.notNull(element, MANDATORY_ARGUMENT_MISSING);
         this.source = source;
         this.element = element;
     }

@@ -4,8 +4,8 @@ import biz.c24.io.api.data.ValidationManager;
 import biz.c24.io.api.presentation.FIXSource;
 import biz.c24.io.fix42.ExecutionReportElement;
 import biz.c24.io.fix42.NewOrderSingleElement;
-import biz.c24.io.mongodb.fix.C24ParseAdapter;
-import biz.c24.io.mongodb.fix.impl.C24ParseAdapterImpl;
+import biz.c24.io.mongodb.fix.C24ParseTemplate;
+import biz.c24.io.mongodb.fix.impl.C24ParseTemplateImpl;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -60,17 +60,17 @@ public class C24Configuration {
         return new ValidationManager();
     }
 
-    @Bean(name = "c24NewOrderSingleParseAdapter")
-    public C24ParseAdapter<NewOrderSingleElement, FIXSource> 
-        getC24NewOrderSingleParseAdapter() {
-        return new C24ParseAdapterImpl<NewOrderSingleElement, 
-                        FIXSource>(getFixParser(), getNewOrderSingleElement());
+    @Bean(name = "c24NewOrderSingleParseTemplate")
+    public C24ParseTemplate<NewOrderSingleElement, FIXSource> 
+        getC24NewOrderSingleParseTemplate() {
+        return new C24ParseTemplateImpl<NewOrderSingleElement, 
+                                FIXSource>(getFixParser(), getNewOrderSingleElement());
     }
 
-    @Bean(name = "c24ExecutionReportParseAdapter")
-    public C24ParseAdapter<ExecutionReportElement, FIXSource> 
-        getC24ExecutionReportParseAdapter() {
-        return new C24ParseAdapterImpl<ExecutionReportElement, 
-                        FIXSource>(getFixParser(), getExecutionReportElement());
+    @Bean(name = "c24ExecutionReportParseTemplate")
+    public C24ParseTemplate<ExecutionReportElement, FIXSource> 
+        getC24ExecutionReportParseTemplate() {
+        return new C24ParseTemplateImpl<ExecutionReportElement, 
+                                FIXSource>(getFixParser(), getExecutionReportElement());
     }
 }

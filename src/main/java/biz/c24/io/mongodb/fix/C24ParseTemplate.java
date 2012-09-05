@@ -11,6 +11,6 @@ import biz.c24.io.api.presentation.Source;
  * @author Matt Vickery - matt.vickery@incept5.com
  * @since 31/08/2012
  */
-public interface C24ParseAdapter<E extends Element, S extends Source> extends C24MessageFormatEmitter {
+public interface C24ParseTemplate<E extends Element, S extends Source> extends C24MessageFormatEmitter {
     public ComplexDataObject bind(String message) throws ParserException;
 }

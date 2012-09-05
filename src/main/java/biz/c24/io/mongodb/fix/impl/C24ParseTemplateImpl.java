@@ -6,7 +6,7 @@ import biz.c24.io.api.data.Element;
 import biz.c24.io.api.presentation.JsonSink;
 import biz.c24.io.api.presentation.Source;
 import biz.c24.io.api.presentation.XMLSink;
-import biz.c24.io.mongodb.fix.C24ParseAdapter;
+import biz.c24.io.mongodb.fix.C24ParseTemplate;
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
 import org.apache.commons.lang3.StringUtils;
@@ -25,15 +25,15 @@ import static biz.c24.io.mongodb.fix.impl.C24StandardMessages.MANDATORY_ARGUMENT
  * @author Matt Vickery - matt.vickery@incept5.com
  * @since 31/08/2012
  */
-public class C24ParseAdapterImpl<E extends Element, S extends Source>
-        implements C24ParseAdapter<E, S> {
+public class C24ParseTemplateImpl<E extends Element, S extends Source>
+        implements C24ParseTemplate<E, S> {
 
     private S source;
     private E element;
     private static JsonSink jsonSink;
     private static XMLSink xmlSink;
 
-    public C24ParseAdapterImpl(S source, E element) {
+    public C24ParseTemplateImpl(S source, E element) {
         Assert.notNull(source, MANDATORY_ARGUMENT_MISSING);
         Assert.notNull(element, MANDATORY_ARGUMENT_MISSING);
         this.source = source;

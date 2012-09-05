@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.annotation.Resource;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -31,8 +32,8 @@ public class NewOrderSingleIntegrationTest {
     private final String FIX_NEW_ORDER_SINGLE_1 = "/data-fixture/new-order-single/new-order-single-01.dat";
     private final String FIX_NEW_ORDER_SERIES = "/data-fixture/new-order-single/new-order-series-01.dat";
     
-    @Autowired
-    private C24ParseAdapter<NewOrderSingleElement, FIXSource> c24NewOrderSingleParseAdapter;
+    @Resource(name = "c24NewOrderSingleParseTemplate")
+    private C24ParseTemplate<NewOrderSingleElement, FIXSource> c24Template;
     
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -46,8 +47,8 @@ public class NewOrderSingleIntegrationTest {
     public void insertSingleOrder() throws Exception {
 
         String rawMessage = FileUtils.readClasspathResourceAsString(FIX_NEW_ORDER_SINGLE_1);
-        ComplexDataObject newOrderSingle = c24NewOrderSingleParseAdapter.bind(rawMessage);
-        mongoTemplate.save(c24NewOrderSingleParseAdapter.asMongoDBObject(newOrderSingle), COLLECTION_NAME);
+        ComplexDataObject newOrderSingle = c24Template.bind(rawMessage);
+        mongoTemplate.save(c24Template.asMongoDBObject(newOrderSingle), COLLECTION_NAME);
     }
 
     @Test
@@ -57,8 +58,8 @@ public class NewOrderSingleIntegrationTest {
         BufferedReader reader = new BufferedReader(new FileReader(newOrderSingleSeriesFile));
         String rawMessage;
         while ((rawMessage = reader.readLine()) != null) {
-            ComplexDataObject newOrderSingle = c24NewOrderSingleParseAdapter.bind(rawMessage);
-            mongoTemplate.save(c24NewOrderSingleParseAdapter.asMongoDBObject(newOrderSingle), COLLECTION_NAME);
+            ComplexDataObject newOrderSingle = c24Template.bind(rawMessage);
+            mongoTemplate.save(c24Template.asMongoDBObject(newOrderSingle), COLLECTION_NAME);
         }
     }
 }

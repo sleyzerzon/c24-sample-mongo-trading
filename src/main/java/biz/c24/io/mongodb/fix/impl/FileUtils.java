@@ -25,7 +25,8 @@ public class FileUtils {
         try {
             File resourceFile = new ClassPathResource(resourceName).getFile();
             byte[] buffer = new byte[(int) resourceFile.length()];
-            BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(resourceFile));
+            BufferedInputStream bufferedInputStream 
+                    = new BufferedInputStream(new FileInputStream(resourceFile));
             bufferedInputStream.read(buffer);
 
             return new String(buffer);

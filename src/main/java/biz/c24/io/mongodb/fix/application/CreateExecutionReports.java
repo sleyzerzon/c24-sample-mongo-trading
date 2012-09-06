@@ -1,7 +1,6 @@
 package biz.c24.io.mongodb.fix.application;
 
 import biz.c24.io.api.data.ComplexDataObject;
-import biz.c24.io.api.data.ValidationManager;
 import biz.c24.io.api.presentation.FIXSource;
 import biz.c24.io.fix42.ExecutionReportElement;
 import biz.c24.io.mongodb.fix.C24MessageParser;
@@ -46,7 +45,6 @@ public class CreateExecutionReports {
         MongoTemplate mongoTemplate = applicationContext.getBean(MongoTemplate.class);
         C24MessageParser<ExecutionReportElement, FIXSource> c24ExecutionReportMessageParser
                 = (C24MessageParser<ExecutionReportElement, FIXSource>) applicationContext.getBean("c24ExecutionReportMessageParser");
-        ValidationManager validationmanager = (ValidationManager)applicationContext.getBean("c24ValidationManager");
 
         try {
             File newOrderSingleSeriesFile = FileUtils.readClasspathResourceAsFile(FIX_NEW_ORDER_SERIES);
@@ -54,7 +52,6 @@ public class CreateExecutionReports {
             String rawMessage;
             while ((rawMessage = reader.readLine()) != null) {
                 ComplexDataObject newOrderSingle = c24ExecutionReportMessageParser.bind(rawMessage);
-                validationmanager.validateByException(newOrderSingle);
                 mongoTemplate.save(c24ExecutionReportMessageParser.asMongoDBObject(newOrderSingle), COLLECTION_NAME);
             }
         } catch (Exception e) {

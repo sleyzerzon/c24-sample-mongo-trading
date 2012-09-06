@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.annotation.Resource;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -31,8 +32,8 @@ public class ExecutionReportIntegrationTest {
     private final String FIX_EXECUTION_REPORT_SINGLE_1 = "/data-fixture/execution-report/execution-report-single-01.dat";
     private final String FIX_EXECUTION_REPORT_SERIES = "/data-fixture/execution-report/execution-report-series-01.dat";
 
-    @Autowired
-    private C24MessageParser<ExecutionReportElement, FIXSource> c24ExecutionReportMessageParser;
+    @Resource(name = "c24ExecutionReportParseTemplate")
+    private C24ParseTemplate<ExecutionReportElement, FIXSource> c24Template;
     
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -45,8 +46,8 @@ public class ExecutionReportIntegrationTest {
     @Test
     public void insertExecutionReport() throws Exception {
         String rawMessage = FileUtils.readClasspathResourceAsString(FIX_EXECUTION_REPORT_SINGLE_1);
-        ComplexDataObject executionReport = c24ExecutionReportMessageParser.bind(rawMessage);
-        mongoTemplate.save(c24ExecutionReportMessageParser.asMongoDBObject(executionReport), COLLECTION_NAME);
+        ComplexDataObject executionReport = c24Template.bind(rawMessage);
+        mongoTemplate.save(c24Template.asMongoDBObject(executionReport), COLLECTION_NAME);
     }
 
     @Test
@@ -56,8 +57,8 @@ public class ExecutionReportIntegrationTest {
         BufferedReader reader = new BufferedReader(new FileReader(newOrderSingleSeriesFile));
         String rawMessage;
         while ((rawMessage = reader.readLine()) != null) {
-            ComplexDataObject executionReport = c24ExecutionReportMessageParser.bind(rawMessage);
-            mongoTemplate.save(c24ExecutionReportMessageParser.asMongoDBObject(executionReport), COLLECTION_NAME);
+            ComplexDataObject executionReport = c24Template.bind(rawMessage);
+            mongoTemplate.save(c24Template.asMongoDBObject(executionReport), COLLECTION_NAME);
         }
     }
 }

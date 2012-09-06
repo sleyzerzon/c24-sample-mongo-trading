@@ -4,8 +4,8 @@ import biz.c24.io.api.data.ValidationManager;
 import biz.c24.io.api.presentation.FIXSource;
 import biz.c24.io.fix42.ExecutionReportElement;
 import biz.c24.io.fix42.NewOrderSingleElement;
-import biz.c24.io.mongodb.fix.C24MessageParser;
-import biz.c24.io.mongodb.fix.impl.C24MessageParserImpl;
+import biz.c24.io.mongodb.fix.C24ParseTemplate;
+import biz.c24.io.mongodb.fix.impl.C24ParseTemplateImpl;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,15 +23,16 @@ public class C24Configuration {
     @Bean
     public static PropertyPlaceholderConfigurer properties() {
         PropertyPlaceholderConfigurer ppc = new PropertyPlaceholderConfigurer();
-        final org.springframework.core.io.Resource[] resources = new ClassPathResource[]{
+        final org.springframework.core.io.Resource[] resources 
+                = new ClassPathResource[]{
                 new ClassPathResource("/META-INF/spring/mongoDb.properties")
         };
         ppc.setLocations(resources);
         return ppc;
     }
 
-    @Bean(name = "fixSource")
-    public FIXSource getFixSource() {
+    @Bean(name = "fixParser")
+    public FIXSource getFixParser() {
 
         FIXSource fixSource = new FIXSource();
 
@@ -59,15 +60,17 @@ public class C24Configuration {
         return new ValidationManager();
     }
 
-    @Bean(name = "c24NewOrderSingleMessageParser")
-    public C24MessageParser<NewOrderSingleElement, FIXSource> getC24NewOrderSingleMessageAdapter() {
-        return new C24MessageParserImpl<NewOrderSingleElement, FIXSource>(getFixSource(),
-                getNewOrderSingleElement());
+    @Bean(name = "c24NewOrderSingleParseTemplate")
+    public C24ParseTemplate<NewOrderSingleElement, FIXSource> 
+        getC24NewOrderSingleParseTemplate() {
+        return new C24ParseTemplateImpl<NewOrderSingleElement, 
+                                FIXSource>(getFixParser(), getNewOrderSingleElement());
     }
 
-    @Bean(name = "c24ExecutionReportMessageParser")
-    public C24MessageParser<ExecutionReportElement, FIXSource> getC24TradeCaptureReportAdapter() {
-        return new C24MessageParserImpl<ExecutionReportElement, FIXSource>(getFixSource(),
-                getExecutionReportElement());
+    @Bean(name = "c24ExecutionReportParseTemplate")
+    public C24ParseTemplate<ExecutionReportElement, FIXSource> 
+        getC24ExecutionReportParseTemplate() {
+        return new C24ParseTemplateImpl<ExecutionReportElement, 
+                                FIXSource>(getFixParser(), getExecutionReportElement());
     }
 }

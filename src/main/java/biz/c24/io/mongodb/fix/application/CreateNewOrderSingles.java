@@ -1,6 +1,7 @@
 package biz.c24.io.mongodb.fix.application;
 
 import biz.c24.io.api.data.ComplexDataObject;
+import biz.c24.io.api.data.ValidationManager;
 import biz.c24.io.api.presentation.FIXSource;
 import biz.c24.io.fix42.NewOrderSingleElement;
 import biz.c24.io.mongodb.fix.C24ParseTemplate;
@@ -45,6 +46,7 @@ public class CreateNewOrderSingles {
         MongoTemplate mongoTemplate = applicationContext.getBean(MongoTemplate.class);
         C24ParseTemplate<NewOrderSingleElement, FIXSource> c24Template
                 = (C24ParseTemplate<NewOrderSingleElement, FIXSource>) applicationContext.getBean("c24NewOrderSingleParseTemplate");
+        ValidationManager validationManager = (ValidationManager)applicationContext.getBean("c24ValidationManager");
 
         try {
             File newOrderSingleSeriesFile = FileUtils.readClasspathResourceAsFile(FIX_NEW_ORDER_SERIES);
@@ -52,6 +54,7 @@ public class CreateNewOrderSingles {
             String rawMessage;
             while ((rawMessage = reader.readLine()) != null) {
                 ComplexDataObject newOrderSingle = c24Template.bind(rawMessage);
+                validationManager.validateByException(newOrderSingle);
                 mongoTemplate.save(c24Template.asMongoDBObject(newOrderSingle), COLLECTION_NAME);
             }
         } catch (Exception e) {

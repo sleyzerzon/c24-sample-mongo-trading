@@ -1,6 +1,7 @@
 package biz.c24.io.mongodb.fix.application;
 
 import biz.c24.io.api.data.ComplexDataObject;
+import biz.c24.io.api.data.ValidationManager;
 import biz.c24.io.api.presentation.FIXSource;
 import biz.c24.io.fix42.ExecutionReportElement;
 import biz.c24.io.mongodb.fix.C24ParseTemplate;
@@ -45,14 +46,16 @@ public class CreateExecutionReports {
         MongoTemplate mongoTemplate = applicationContext.getBean(MongoTemplate.class);
         C24ParseTemplate<ExecutionReportElement, FIXSource> c24Template
                 = (C24ParseTemplate<ExecutionReportElement, FIXSource>) applicationContext.getBean("c24ExecutionReportParseTemplate");
+        ValidationManager validationManager = (ValidationManager)applicationContext.getBean("c24ValidationManager");
 
         try {
             File newOrderSingleSeriesFile = FileUtils.readClasspathResourceAsFile(FIX_NEW_ORDER_SERIES);
             BufferedReader reader = new BufferedReader(new FileReader(newOrderSingleSeriesFile));
             String rawMessage;
             while ((rawMessage = reader.readLine()) != null) {
-                ComplexDataObject newOrderSingle = c24Template.bind(rawMessage);
-                mongoTemplate.save(c24Template.asMongoDBObject(newOrderSingle), COLLECTION_NAME);
+                ComplexDataObject executionReport = c24Template.bind(rawMessage);
+                validationManager.validateByException(executionReport);
+                mongoTemplate.save(c24Template.asMongoDBObject(executionReport), COLLECTION_NAME);
             }
         } catch (Exception e) {
             LOGGER.error("Error loading ExecutionReport messages.", e);

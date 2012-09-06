@@ -5,27 +5,23 @@ import biz.c24.io.api.data.ValidationManager;
 import biz.c24.io.api.presentation.FIXSource;
 import biz.c24.io.fix42.NewOrderSingleElement;
 import biz.c24.io.mongodb.fix.C24ParseTemplate;
-import biz.c24.io.mongodb.fix.configuration.MongoDbConfiguration;
 import biz.c24.io.mongodb.fix.impl.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.util.Assert;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
-public class CreateNewOrderSingles {
+public class NewOrderSingleDataLoader extends AbstractDataLoader {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(CreateNewOrderSingles.class);
-    private AnnotationConfigApplicationContext applicationContext;
+    private final Logger LOGGER = LoggerFactory.getLogger(NewOrderSingleDataLoader.class);
     private final String FIX_NEW_ORDER_SERIES = "/data-fixture/new-order-single/new-order-series-01.dat";
     public static final String COLLECTION_NAME = "NewOrderSingle";
 
     public static void main(String[] args) {
-        new CreateNewOrderSingles().run();
+        new NewOrderSingleDataLoader().run();
     }
 
     private void run() {
@@ -35,18 +31,11 @@ public class CreateNewOrderSingles {
         LOGGER.info("Terminating application {}.", getClass());
     }
 
-    private void loadSpringContainer() {
-        applicationContext = new AnnotationConfigApplicationContext();
-        applicationContext.register(MongoDbConfiguration.class);
-        applicationContext.refresh();
-    }
-
     private void createNewOrders() {
-        Assert.state(applicationContext != null);
-        MongoTemplate mongoTemplate = applicationContext.getBean(MongoTemplate.class);
+        MongoTemplate mongoTemplate = getMongoTemplate();
         C24ParseTemplate<NewOrderSingleElement, FIXSource> c24Template
-                = (C24ParseTemplate<NewOrderSingleElement, FIXSource>) applicationContext.getBean("c24NewOrderSingleParseTemplate");
-        ValidationManager validationManager = (ValidationManager)applicationContext.getBean("c24ValidationManager");
+                = getC24NewOrderSingleParseTemplate();
+        ValidationManager validationManager = getC24ValidationManager();
 
         try {
             File newOrderSingleSeriesFile = FileUtils.readClasspathResourceAsFile(FIX_NEW_ORDER_SERIES);

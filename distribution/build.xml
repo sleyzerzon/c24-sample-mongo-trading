@@ -45,11 +45,11 @@
     </target>
 
 	<target name="createNewOrders" depends="compile" description="Runs the sample application">
-	   <java classpathref="project.classpath" classname="biz.c24.io.mongodb.fix.application.CreateNewOrderSingles"/>
+	   <java classpathref="project.classpath" classname="biz.c24.io.mongodb.fix.application.NewOrderSingleDataLoader"/>
 	</target>
     
     <target name="createExecutionReports" depends="createNewOrders" description="Runs the sample application">
-   	   <java classpathref="project.classpath" classname="biz.c24.io.mongodb.fix.application.CreateNewOrderSingles"/>
+   	   <java classpathref="project.classpath" classname="biz.c24.io.mongodb.fix.application.NewOrderSingleDataLoader"/>
    	</target>
 
 </project>

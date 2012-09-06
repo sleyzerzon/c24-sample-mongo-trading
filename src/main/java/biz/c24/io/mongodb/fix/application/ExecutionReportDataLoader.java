@@ -5,27 +5,23 @@ import biz.c24.io.api.data.ValidationManager;
 import biz.c24.io.api.presentation.FIXSource;
 import biz.c24.io.fix42.ExecutionReportElement;
 import biz.c24.io.mongodb.fix.C24ParseTemplate;
-import biz.c24.io.mongodb.fix.configuration.MongoDbConfiguration;
 import biz.c24.io.mongodb.fix.impl.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.util.Assert;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
-public class CreateExecutionReports {
+public class ExecutionReportDataLoader extends AbstractDataLoader     {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(CreateExecutionReports.class);
-    private AnnotationConfigApplicationContext applicationContext;
+    private final Logger LOGGER = LoggerFactory.getLogger(ExecutionReportDataLoader.class);
     private final String FIX_NEW_ORDER_SERIES = "/data-fixture/execution-report/execution-report-series-01.dat";
     public static final String COLLECTION_NAME = "ExecutionReport";
 
     public static void main(String[] args) {
-        new CreateExecutionReports().run();
+        new ExecutionReportDataLoader().run();
     }
 
     private void run() {
@@ -35,18 +31,11 @@ public class CreateExecutionReports {
         LOGGER.info("Terminating application {}.", getClass());
     }
 
-    private void loadSpringContainer() {
-        applicationContext = new AnnotationConfigApplicationContext();
-        applicationContext.register(MongoDbConfiguration.class);
-        applicationContext.refresh();
-    }
-
     private void createExecutionReports() {
-        Assert.state(applicationContext != null);
-        MongoTemplate mongoTemplate = applicationContext.getBean(MongoTemplate.class);
+        MongoTemplate mongoTemplate = getMongoTemplate();
         C24ParseTemplate<ExecutionReportElement, FIXSource> c24Template
-                = (C24ParseTemplate<ExecutionReportElement, FIXSource>) applicationContext.getBean("c24ExecutionReportParseTemplate");
-        ValidationManager validationManager = (ValidationManager)applicationContext.getBean("c24ValidationManager");
+                = getC24ExecutionReportParseTemplate();
+        ValidationManager validationManager = getC24ValidationManager();
 
         try {
             File newOrderSingleSeriesFile = FileUtils.readClasspathResourceAsFile(FIX_NEW_ORDER_SERIES);

@@ -1,6 +1,7 @@
 package biz.c24.io.mongodb.fix.application;
 
 import biz.c24.io.api.data.ComplexDataObject;
+import biz.c24.io.api.data.ValidationManager;
 import biz.c24.io.api.presentation.FIXSource;
 import biz.c24.io.fix42.NewOrderSingleElement;
 import biz.c24.io.mongodb.fix.C24MessageParser;
@@ -22,6 +23,7 @@ public class CreateNewOrderSingles {
     private AnnotationConfigApplicationContext applicationContext;
     private final String FIX_NEW_ORDER_SERIES = "/data-fixture/new-order-single/new-order-series-01.dat";
     public static final String COLLECTION_NAME = "NewOrderSingle";
+
 
     public static void main(String[] args) {
         new CreateNewOrderSingles().run();
@@ -45,6 +47,7 @@ public class CreateNewOrderSingles {
         MongoTemplate mongoTemplate = applicationContext.getBean(MongoTemplate.class);
         C24MessageParser<NewOrderSingleElement, FIXSource> c24NewOrderSingleMessageParser
                 = (C24MessageParser<NewOrderSingleElement, FIXSource>) applicationContext.getBean("c24NewOrderSingleMessageParser");
+        ValidationManager validationmanager = (ValidationManager)applicationContext.getBean("c24ValidationManager");
 
         try {
             File newOrderSingleSeriesFile = FileUtils.readClasspathResourceAsFile(FIX_NEW_ORDER_SERIES);
@@ -52,6 +55,7 @@ public class CreateNewOrderSingles {
             String rawMessage;
             while ((rawMessage = reader.readLine()) != null) {
                 ComplexDataObject newOrderSingle = c24NewOrderSingleMessageParser.bind(rawMessage);
+                validationmanager.validateByException(newOrderSingle);
                 mongoTemplate.save(c24NewOrderSingleMessageParser.asMongoDBObject(newOrderSingle), COLLECTION_NAME);
             }
         } catch (Exception e) {

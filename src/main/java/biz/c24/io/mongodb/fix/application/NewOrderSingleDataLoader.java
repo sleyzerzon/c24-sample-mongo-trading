@@ -14,6 +14,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
+/**
+ * Data loader for persisting FIX messages to MongoDB
+ */
 public class NewOrderSingleDataLoader extends AbstractDataLoader {
 
     private final Logger LOGGER = LoggerFactory.getLogger(NewOrderSingleDataLoader.class);

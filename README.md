@@ -24,7 +24,7 @@ Internet-enabled environments. Cloning the Github project and running the usual 
 dependencies, compile all of the application code and run the integration test classes. 
 
 The second distribution provides the sample project as a package that can be run in a non-Internet enabled environment. 
-The package is distributed as a zip file that needs to be unpacked and run using the supplied ant build file or shell 
+The package is distributed as a zip file (http://dev.c24.biz/io_mongodb/samples/c24-sample-mongo-trading-1.0-project.zip) that needs to be unpacked and run using the supplied ant build file or shell 
 script. The ant build file contains several interesting targets, clean, compile, createNewOrders and 
 createExecutionReports. Each of these needs to be run in turn in order to populate the database with data necessary for 
 the queries to be executed. The default target invokes all targets in the correct order automatically and so running 

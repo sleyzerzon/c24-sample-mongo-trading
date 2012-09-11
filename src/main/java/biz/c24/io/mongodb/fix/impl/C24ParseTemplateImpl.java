@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static biz.c24.io.mongodb.fix.impl.C24StandardMessages.MANDATORY_ARGUMENT_MISSING;
+import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.Assert.state;
 
 /**
  * Produced on behalf of C24 Technologies Ltd.
@@ -31,12 +33,12 @@ public class C24ParseTemplateImpl<E extends Element, S extends Source>
 
     private S source;
     private E element;
-    private static JsonSink jsonSink;
-    private static XMLSink xmlSink;
+    private static JsonSink jsonSink = new JsonSink();
+    private static XMLSink xmlSink = new XMLSink();
 
     public C24ParseTemplateImpl(S source, E element) {
-        Assert.notNull(source, MANDATORY_ARGUMENT_MISSING);
-        Assert.notNull(element, MANDATORY_ARGUMENT_MISSING);
+        notNull(source, MANDATORY_ARGUMENT_MISSING);
+        notNull(element, MANDATORY_ARGUMENT_MISSING);
         this.source = source;
         this.element = element;
     }
@@ -54,16 +56,16 @@ public class C24ParseTemplateImpl<E extends Element, S extends Source>
 
     public void validateByException(ComplexDataObject complexDataObject) throws ValidationException {
 
-        Assert.notNull(complexDataObject, MANDATORY_ARGUMENT_MISSING);
+        notNull(complexDataObject, MANDATORY_ARGUMENT_MISSING);
         
-        ValidationManager validationManager = new ValidationManager();
-        validationManager.validateByException(complexDataObject);
+        new ValidationManager().validateByException(complexDataObject);
     }
 
     public List<ValidationEvent>[] validateByEvent(ComplexDataObject complexDataObject) {
         
-        ValidationManager validationManager = new ValidationManager();
+        notNull(complexDataObject, MANDATORY_ARGUMENT_MISSING);
         
+        ValidationManager validationManager = new ValidationManager();
         final List<ValidationEvent> validationPass = new ArrayList<ValidationEvent>();
         final List<ValidationEvent> validationFail = new ArrayList<ValidationEvent>();
         
@@ -83,10 +85,9 @@ public class C24ParseTemplateImpl<E extends Element, S extends Source>
 
     public String asJson(ComplexDataObject complexDataObject) {
 
-        Assert.notNull(complexDataObject, MANDATORY_ARGUMENT_MISSING);
+        notNull(complexDataObject, MANDATORY_ARGUMENT_MISSING);
+        state(jsonSink != null);
         try {
-            if (jsonSink == null)
-                jsonSink = new JsonSink();
             Writer writer = new StringWriter();
             jsonSink.setWriter(writer);
             jsonSink.writeObject(complexDataObject);
@@ -98,11 +99,12 @@ public class C24ParseTemplateImpl<E extends Element, S extends Source>
 
     public String asXML(ComplexDataObject complexDataObject) {
 
-        Assert.notNull(complexDataObject, MANDATORY_ARGUMENT_MISSING);
+        notNull(complexDataObject, MANDATORY_ARGUMENT_MISSING);
+        state(xmlSink != null);
+        
         try {
-            if (xmlSink == null)
-                xmlSink = new XMLSink();
             Writer writer = new StringWriter();
+            writer.flush();
             xmlSink.setWriter(writer);
             xmlSink.writeObject(complexDataObject);
             return writer.toString();
@@ -113,7 +115,7 @@ public class C24ParseTemplateImpl<E extends Element, S extends Source>
 
     public DBObject asMongoDBObject(ComplexDataObject complexDataObject) {
 
-        Assert.notNull(complexDataObject, MANDATORY_ARGUMENT_MISSING);
+        notNull(complexDataObject, MANDATORY_ARGUMENT_MISSING);
         return (DBObject) JSON.parse(asJson(complexDataObject));
     }
 }

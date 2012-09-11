@@ -1,8 +1,7 @@
 package biz.c24.io.mongodb.fix.impl;
 
 import biz.c24.io.api.ParserException;
-import biz.c24.io.api.data.ComplexDataObject;
-import biz.c24.io.api.data.Element;
+import biz.c24.io.api.data.*;
 import biz.c24.io.api.presentation.JsonSink;
 import biz.c24.io.api.presentation.Source;
 import biz.c24.io.api.presentation.XMLSink;
@@ -16,12 +15,14 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 
 import static biz.c24.io.mongodb.fix.impl.C24StandardMessages.MANDATORY_ARGUMENT_MISSING;
 
 /**
  * Produced on behalf of C24 Technologies Ltd.
- * 
+ *
  * @author Matt Vickery - matt.vickery@incept5.com
  * @since 31/08/2012
  */
@@ -49,6 +50,35 @@ public class C24ParseTemplateImpl<E extends Element, S extends Source>
         } catch (IOException e) {
             throw new ParserException(e, message);
         }
+    }
+
+    public void validateByException(ComplexDataObject complexDataObject) throws ValidationException {
+
+        Assert.notNull(complexDataObject, MANDATORY_ARGUMENT_MISSING);
+        
+        ValidationManager validationManager = new ValidationManager();
+        validationManager.validateByException(complexDataObject);
+    }
+
+    public List<ValidationEvent>[] validateByEvent(ComplexDataObject complexDataObject) {
+        
+        ValidationManager validationManager = new ValidationManager();
+        
+        final List<ValidationEvent> validationPass = new ArrayList<ValidationEvent>();
+        final List<ValidationEvent> validationFail = new ArrayList<ValidationEvent>();
+        
+        validationManager.addValidationListener(new ValidationListener() {
+            public void validationPassed(ValidationEvent validationEvent) {
+                validationPass.add(validationEvent);
+            }
+
+            public void validationFailed(ValidationEvent validationEvent) {
+                validationFail.add(validationEvent);
+            }
+        });
+        validationManager.validateByEvents(complexDataObject);
+        return (List<ValidationEvent>[]) new Object[]{validationPass, validationFail};
+        
     }
 
     public String asJson(ComplexDataObject complexDataObject) {
@@ -82,7 +112,7 @@ public class C24ParseTemplateImpl<E extends Element, S extends Source>
     }
 
     public DBObject asMongoDBObject(ComplexDataObject complexDataObject) {
-        
+
         Assert.notNull(complexDataObject, MANDATORY_ARGUMENT_MISSING);
         return (DBObject) JSON.parse(asJson(complexDataObject));
     }

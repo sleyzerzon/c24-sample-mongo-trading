@@ -59,6 +59,7 @@ public class NewOrderSingleIntegrationTest {
         String rawMessage;
         while ((rawMessage = reader.readLine()) != null) {
             ComplexDataObject newOrderSingle = c24Template.bind(rawMessage);
+            c24Template.validateByException(newOrderSingle);
             mongoTemplate.save(c24Template.asMongoDBObject(newOrderSingle), COLLECTION_NAME);
         }
     }

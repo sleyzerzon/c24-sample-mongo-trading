@@ -1,6 +1,5 @@
 package biz.c24.io.mongodb.fix.application;
 
-import biz.c24.io.api.data.ValidationManager;
 import biz.c24.io.api.presentation.FIXSource;
 import biz.c24.io.fix42.ExecutionReportElement;
 import biz.c24.io.fix42.NewOrderSingleElement;
@@ -37,10 +36,6 @@ public class AbstractDataLoader {
 
     protected C24ParseTemplate<NewOrderSingleElement, FIXSource> getC24NewOrderSingleParseTemplate() {
         return getC24Configuration().getC24NewOrderSingleParseTemplate();
-    }
-
-    protected ValidationManager getC24ValidationManager() {
-        return getC24Configuration().getC24ValidationManager();
     }
 
     private C24Configuration getC24Configuration() {

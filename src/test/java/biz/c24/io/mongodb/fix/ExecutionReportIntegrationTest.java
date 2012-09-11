@@ -58,6 +58,7 @@ public class ExecutionReportIntegrationTest {
         String rawMessage;
         while ((rawMessage = reader.readLine()) != null) {
             ComplexDataObject executionReport = c24Template.bind(rawMessage);
+            c24Template.validateByException(executionReport);
             mongoTemplate.save(c24Template.asMongoDBObject(executionReport), COLLECTION_NAME);
         }
     }

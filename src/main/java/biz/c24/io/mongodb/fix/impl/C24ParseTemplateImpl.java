@@ -101,7 +101,6 @@ public class C24ParseTemplateImpl<E extends Element, S extends Source>
 
         notNull(complexDataObject, MANDATORY_ARGUMENT_MISSING);
         state(xmlSink != null);
-        
         try {
             Writer writer = new StringWriter();
             writer.flush();
